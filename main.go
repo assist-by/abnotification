@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/Lux-N-Sal/autro-notification/notification"
+	notification "github.com/Lux-N-Sal/autro-notification/notification"
 	pb "github.com/Lux-N-Sal/autro-notification/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
