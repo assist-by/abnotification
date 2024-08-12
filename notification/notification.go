@@ -106,13 +106,24 @@ func SendSlackAlert(attachment Attachment) error {
 	return nil
 }
 
-func GetColorForSignal(signal string) (int, string) {
+func GetColorForDiscord(signal string) int {
 	switch signal {
 	case "LONG":
-		return 0x00FF00, "good" // Green
+		return 0x00FF00 // Green
 	case "SHORT":
-		return 0xFF0000, "danger" // Red
+		return 0xFF0000 // Red
 	default:
-		return 0x0000FF, "info" // Blue
+		return 0x0000FF // Blue
+	}
+}
+
+func GetColorForSlack(signal string) string {
+	switch signal {
+	case "LONG":
+		return "good" // Green
+	case "SHORT":
+		return "danger" // Red
+	default:
+		return "info" // Blue
 	}
 }
