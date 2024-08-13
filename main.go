@@ -16,7 +16,7 @@ import (
 type SignalResult struct {
 	Signal     string
 	Timestamp  int64
-	Price      string
+	Price      float64
 	StopLoss   float64
 	TakeProfie float64
 	Conditions SignalConditions
@@ -90,7 +90,7 @@ func generateDescription(signalResult SignalResult) string {
 	timestamp := time.Unix(signalResult.Timestamp/1000, 0).In(koreaLocation).Format("2006-01-02 15:04:05 MST")
 
 	description := fmt.Sprintf("Signal: %s for BTCUSDT at %s\n\n", signalResult.Signal, timestamp)
-	description += fmt.Sprintf("Price : %s\n", signalResult.Price)
+	description += fmt.Sprintf("Price : %.3f\n", signalResult.Price)
 	description += fmt.Sprintf("Stoploss : %.3f, Takeprofit: %.3f\n", signalResult.StopLoss, signalResult.TakeProfie)
 
 	description += "[LONG]\n"
