@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"time"
 
-	notification "github.com/Lux-N-Sal/autro-notification/notification"
 	"github.com/segmentio/kafka-go"
+	notification "github.com/with-autro/autro-notification/notification"
 )
 
 type SignalResult struct {
