@@ -10,27 +10,9 @@ import (
 	"time"
 
 	"github.com/segmentio/kafka-go"
+	lib "github.com/with-autro/autro-library"
 	notification "github.com/with-autro/autro-notification/notification"
 )
-
-type SignalResult struct {
-	Signal     string
-	Timestamp  int64
-	Price      float64
-	StopLoss   float64
-	TakeProfie float64
-	Conditions SignalConditions
-}
-
-type SignalConditions struct {
-	Long  [3]SignalCondition
-	Short [3]SignalCondition
-}
-
-type SignalCondition struct {
-	Condition bool
-	Value     float64
-}
 
 var (
 	kafkaBroker string
@@ -58,7 +40,7 @@ func createReader() *kafka.Reader {
 	})
 }
 
-func processSignal(signalResult SignalResult) error {
+func processSignal(signalResult lib.SignalResult) error {
 	log.Printf("Received signal: %+v", signalResult)
 
 	discordColor := notification.GetColorForDiscord(signalResult.Signal)
@@ -80,7 +62,7 @@ func processSignal(signalResult SignalResult) error {
 	return nil
 }
 
-func generateDescription(signalResult SignalResult) string {
+func generateDescription(signalResult lib.SignalResult) string {
 	// Convert timestamp to Korean time
 	koreaLocation, err := time.LoadLocation("Asia/Seoul")
 	if err != nil {
@@ -94,14 +76,24 @@ func generateDescription(signalResult SignalResult) string {
 	description += fmt.Sprintf("Stoploss : %.3f, Takeprofit: %.3f\n", signalResult.StopLoss, signalResult.TakeProfie)
 
 	description += "[LONG]\n"
-	description += fmt.Sprintf("EMA200: %.6f(%v)\n", signalResult.Conditions.Long[0].Value, signalResult.Conditions.Long[0].Condition)
-	description += fmt.Sprintf("MACD: %.6f(%v)\n", signalResult.Conditions.Long[1].Value, signalResult.Conditions.Long[1].Condition)
-	description += fmt.Sprintf("ParabolicSAR: %.6f(%v)\n", signalResult.Conditions.Long[2].Value, signalResult.Conditions.Long[2].Condition)
+	description += fmt.Sprintf("[EMA200] : %v \n", signalResult.Conditions.Long.EMA200Condition)
+	description += fmt.Sprintf("EMA200: %.3f, Diff: %.3f\n", signalResult.Conditions.Long.EMA200Value, signalResult.Conditions.Long.EMA200Diff)
+
+	description += fmt.Sprintf("[MACD] : %v \n", signalResult.Conditions.Long.MACDCondition)
+	description += fmt.Sprintf("MACD Line: %.3f, Signal Line: %.3f, Histogram: %.3f\n", signalResult.Conditions.Long.MACDNowMACDLine, signalResult.Conditions.Long.MACDNowSignalLine, signalResult.Conditions.Long.MACDHistogram)
+
+	description += fmt.Sprintf("[Parabolic SAR] : %v \n", signalResult.Conditions.Long.ParabolicSARCondition)
+	description += fmt.Sprintf("ParabolicSAR: %.3f, Diff: %.3f\n", signalResult.Conditions.Long.ParabolicSARValue, signalResult.Conditions.Long.ParabolicSARDiff)
 
 	description += "[SHORT]\n"
-	description += fmt.Sprintf("EMA200: %.6f(%v)\n", signalResult.Conditions.Short[0].Value, signalResult.Conditions.Short[0].Condition)
-	description += fmt.Sprintf("MACD: %.6f(%v)\n", signalResult.Conditions.Short[1].Value, signalResult.Conditions.Short[1].Condition)
-	description += fmt.Sprintf("ParabolicSAR: %.6f(%v)\n", signalResult.Conditions.Short[2].Value, signalResult.Conditions.Short[2].Condition)
+	description += fmt.Sprintf("[EMA200] : %v \n", signalResult.Conditions.Short.EMA200Condition)
+	description += fmt.Sprintf("EMA200: %.3f, Diff: %.3f\n", signalResult.Conditions.Short.EMA200Value, signalResult.Conditions.Short.EMA200Diff)
+
+	description += fmt.Sprintf("[MACD] : %v \n", signalResult.Conditions.Short.MACDCondition)
+	description += fmt.Sprintf("MACD Line: %.3f, Signal Line: %.3f, Histogram: %.3f\n", signalResult.Conditions.Short.MACDNowMACDLine, signalResult.Conditions.Short.MACDNowSignalLine, signalResult.Conditions.Short.MACDHistogram)
+
+	description += fmt.Sprintf("[Parabolic SAR] : %v \n", signalResult.Conditions.Short.ParabolicSARCondition)
+	description += fmt.Sprintf("ParabolicSAR: %.3f, Diff: %.3f\n", signalResult.Conditions.Short.ParabolicSARValue, signalResult.Conditions.Short.ParabolicSARDiff)
 
 	return description
 }
@@ -139,7 +131,7 @@ func main() {
 					continue
 				}
 
-				var signalResult SignalResult
+				var signalResult lib.SignalResult
 				if err := json.Unmarshal(msg.Value, &signalResult); err != nil {
 					log.Printf("Error unmarshalling message: %v", err)
 					continue
