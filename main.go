@@ -16,8 +16,11 @@ import (
 )
 
 var (
-	kafkaBroker string
-	kafkaTopic  string
+	kafkaBroker       string
+	kafkaTopic        string
+	registrationTopic string
+	host              string
+	port              string
 )
 
 func init() {
@@ -30,9 +33,22 @@ func init() {
 	if kafkaTopic == "" {
 		kafkaTopic = "signal-to-notification"
 	}
+	registrationTopic = os.Getenv("REGISTRATION_TOPIC")
+	if registrationTopic == "" {
+		registrationTopic = "service-registration"
+	}
+	host = os.Getenv("HOST")
+	if host == "" {
+		host = "autro-notification"
+	}
+	port = os.Getenv("PORT")
+	if port == "" {
+		port = "50053"
+	}
 
 }
 
+// signal read consumer
 func createReader() *kafka.Reader {
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:     []string{kafkaBroker},
@@ -41,6 +57,42 @@ func createReader() *kafka.Reader {
 	})
 }
 
+// Service Discovery에 등록하는 함수
+func registerService(writer *kafka.Writer) error {
+	service := lib.Service{
+		Name:    "autro-signal",
+		Address: fmt.Sprintf("%s:%s", host, port),
+	}
+
+	jsonData, err := json.Marshal(service)
+	if err != nil {
+		return fmt.Errorf("error marshaling service data: %v", err)
+	}
+
+	err = writer.WriteMessages(context.Background(), kafka.Message{
+		Key:   []byte(service.Name),
+		Value: jsonData,
+	})
+
+	if err != nil {
+		return fmt.Errorf("error sending registration message: %v", err)
+	}
+
+	log.Println("Service registration message sent successfully")
+	return nil
+}
+
+// 서비스 등록 kafka producer 생성
+func createRegistrationWriter() *kafka.Writer {
+	return kafka.NewWriter(
+		kafka.WriterConfig{
+			Brokers:     []string{kafkaBroker},
+			Topic:       registrationTopic,
+			MaxAttempts: 5,
+		})
+}
+
+// start notification
 func processSignal(signalResult lib.SignalResult) error {
 	log.Printf("Received signal: %+v", signalResult)
 
@@ -63,6 +115,7 @@ func processSignal(signalResult lib.SignalResult) error {
 	return nil
 }
 
+// Generate Notification Desciption from Siganl
 func generateDescription(signalResult lib.SignalResult) string {
 	// Convert timestamp to Korean time
 	koreaLocation, err := time.LoadLocation("Asia/Seoul")
@@ -112,6 +165,15 @@ func main() {
 
 	reader := createReader()
 	defer reader.Close()
+
+	// service register producer
+	registrationWriter := createRegistrationWriter()
+	defer registrationWriter.Close()
+
+	// register service
+	if err := registerService(registrationWriter); err != nil {
+		log.Printf("Failed to register service: %v\n", err)
+	}
 
 	log.Printf("Notification service Kafka consumer started. Listening on topic: %s", kafkaTopic)
 
