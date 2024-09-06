@@ -137,8 +137,7 @@ func generateDescription(signalResult lib.SignalResult) string {
 	description += fmt.Sprintf("EMA200: %.3f, Diff: %.3f\n\n", signalResult.Conditions.Long.EMA200Value, signalResult.Conditions.Long.EMA200Diff)
 
 	description += fmt.Sprintf("[MACD] : %v \n", signalResult.Conditions.Long.MACDCondition)
-	description += fmt.Sprintf("Now MACD Line: %.3f, Now Signal Line: %.3f, Now Histogram: %.3f\n", signalResult.Conditions.Long.MACDNowMACDLine, signalResult.Conditions.Long.MACDNowSignalLine, signalResult.Conditions.Long.MACDHistogram)
-	description += fmt.Sprintf("Prev MACD Line: %.3f, Prev Signal Line: %.3f\n\n", signalResult.Conditions.Long.MACDPrevMACDLine, signalResult.Conditions.Long.MACDPrevSignalLine)
+	description += fmt.Sprintf("Now MACD Line: %.3f, Now Signal Line: %.3f, Now Histogram: %.3f\n", signalResult.Conditions.Long.MACDMACDLine, signalResult.Conditions.Long.MACDSignalLine, signalResult.Conditions.Long.MACDHistogram)
 
 	description += fmt.Sprintf("[Parabolic SAR] : %v \n", signalResult.Conditions.Long.ParabolicSARCondition)
 	description += fmt.Sprintf("ParabolicSAR: %.3f, Diff: %.3f\n", signalResult.Conditions.Long.ParabolicSARValue, signalResult.Conditions.Long.ParabolicSARDiff)
@@ -149,7 +148,7 @@ func generateDescription(signalResult lib.SignalResult) string {
 	description += fmt.Sprintf("EMA200: %.3f, Diff: %.3f\n\n", signalResult.Conditions.Short.EMA200Value, signalResult.Conditions.Short.EMA200Diff)
 
 	description += fmt.Sprintf("[MACD] : %v \n", signalResult.Conditions.Short.MACDCondition)
-	description += fmt.Sprintf("MACD Line: %.3f, Signal Line: %.3f, Histogram: %.3f\n\n", signalResult.Conditions.Short.MACDNowMACDLine, signalResult.Conditions.Short.MACDNowSignalLine, signalResult.Conditions.Short.MACDHistogram)
+	description += fmt.Sprintf("MACD Line: %.3f, Signal Line: %.3f, Histogram: %.3f\n\n", signalResult.Conditions.Short.MACDMACDLine, signalResult.Conditions.Short.MACDSignalLine, signalResult.Conditions.Short.MACDHistogram)
 
 	description += fmt.Sprintf("[Parabolic SAR] : %v \n", signalResult.Conditions.Short.ParabolicSARCondition)
 	description += fmt.Sprintf("ParabolicSAR: %.3f, Diff: %.3f\n", signalResult.Conditions.Short.ParabolicSARValue, signalResult.Conditions.Short.ParabolicSARDiff)
