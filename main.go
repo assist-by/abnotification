@@ -9,10 +9,10 @@ import (
 	"os/signal"
 	"time"
 
+	lib "github.com/assist-by/autro-library"
+	signalType "github.com/assist-by/autro-library/signal_type"
+	notification "github.com/assist-by/autro-notification/notification"
 	"github.com/segmentio/kafka-go"
-	lib "github.com/with-autro/autro-library"
-	signalType "github.com/with-autro/autro-library/signal_type"
-	notification "github.com/with-autro/autro-notification/notification"
 )
 
 var (
