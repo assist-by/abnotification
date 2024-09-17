@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"time"
 
+	notification "github.com/assist-by/abnotification/notification"
 	lib "github.com/assist-by/autro-library"
 	signalType "github.com/assist-by/autro-library/signal_type"
-	notification "github.com/assist-by/autro-notification/notification"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -39,7 +39,7 @@ func init() {
 	}
 	host = os.Getenv("HOST")
 	if host == "" {
-		host = "autro-notification"
+		host = "abnotification"
 	}
 	port = os.Getenv("PORT")
 	if port == "" {
@@ -60,7 +60,7 @@ func createReader() *kafka.Reader {
 // Service Discovery에 등록하는 함수
 func registerService(writer *kafka.Writer) error {
 	service := lib.Service{
-		Name:    "autro-notification",
+		Name:    "abnotification",
 		Address: fmt.Sprintf("%s:%s", host, port),
 	}
 

@@ -1,4 +1,4 @@
-module github.com/assist-by/autro-notification
+module github.com/assist-by/abnotification
 
 go 1.22.5
 
