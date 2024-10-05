@@ -10,8 +10,9 @@ import (
 	"time"
 
 	notification "github.com/assist-by/abnotification/notification"
-	lib "github.com/assist-by/autro-library"
-	signalType "github.com/assist-by/autro-library/signal_type"
+	lib "github.com/assist-by/libStruct"
+
+	signalType "github.com/assist-by/libStruct/enums/signalType"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -45,7 +46,6 @@ func init() {
 	if port == "" {
 		port = "50053"
 	}
-
 }
 
 // signal read consumer
